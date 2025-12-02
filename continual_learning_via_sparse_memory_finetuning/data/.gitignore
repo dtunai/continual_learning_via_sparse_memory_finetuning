@@ -1,0 +1,9 @@
+# Ignore all data files
+*.pt
+*.pth
+*.json
+*.txt
+*.csv
+*.pkl
+*.pickle
+!.gitignore

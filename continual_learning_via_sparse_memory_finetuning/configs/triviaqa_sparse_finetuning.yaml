@@ -1,0 +1,42 @@
+# Configuration for TriviaQA Fact Learning with Sparse Memory Finetuning
+
+experiment:
+  name: "triviaqa_sparse_ft_t500_lr2"
+  output_dir: "./outputs/triviaqa_sparse_ft"
+
+model:
+  base_model: "../memory/checkpoints/1.3b_1m_keys"
+  memory_layer_indices: [12]  # Middle layer (layer 12 out of 22 for 1.3B model)
+
+sparse_finetuning:
+  enabled: true
+  top_t: 500  # Update top 500 memory indices
+  use_idf: true  # Use TF-IDF ranking (not just TF)
+  background_indices_path: "data/background_indices_dclm_1k.pt"
+  num_background_batches: 1000
+  idf_smoothing: 1.0
+
+training:
+  optimizer: "sgd"  # SGD recommended for sparse updates
+  lr: 2.0
+  weight_decay: 0.0
+  steps: 1000
+  grad_acc_steps: 1
+
+data:
+  task: "triviaqa"
+  num_facts: 1000  # Number of facts to learn
+  paraphrases_per_fact: 64  # Batch size
+  max_seq_length: 64
+  seed: 42
+
+evaluation:
+  eval_every: 100  # Evaluate every 100 steps
+  benchmarks: ["nq", "gsm8k", "hellaswag"]  # Held-out benchmarks
+  max_samples: 1000  # Max samples per benchmark
+
+logging:
+  use_wandb: true
+  wandb_project: "continual-learning-paper1"
+  log_every: 10
+  save_every: 500

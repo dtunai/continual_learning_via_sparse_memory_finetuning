@@ -1,0 +1,37 @@
+# Configuration for TriviaQA Fact Learning with Full Finetuning (Baseline)
+
+experiment:
+  name: "triviaqa_full_ft_lr5e6"
+  output_dir: "./outputs/triviaqa_full_ft"
+
+model:
+  base_model: "../memory/checkpoints/1.3b_1m_keys"
+  memory_layer_indices: [12]
+
+sparse_finetuning:
+  enabled: false  # Disable sparse finetuning for full finetuning baseline
+
+training:
+  optimizer: "adamw"
+  lr: 5.0e-6  # Much lower learning rate for full finetuning
+  weight_decay: 0.1
+  steps: 1000
+  grad_acc_steps: 1
+
+data:
+  task: "triviaqa"
+  num_facts: 1000
+  paraphrases_per_fact: 64
+  max_seq_length: 64
+  seed: 42
+
+evaluation:
+  eval_every: 100
+  benchmarks: ["nq", "gsm8k", "hellaswag"]
+  max_samples: 1000
+
+logging:
+  use_wandb: true
+  wandb_project: "continual-learning-paper1"
+  log_every: 10
+  save_every: 500
